@@ -2,10 +2,14 @@ const parseHex = hex => hex.length < 6 ? hex[hex.length-3].repeat(2)+hex[hex.len
 
 const dist = (c1, c2) => (c1[0]-c2[0])**2 + (c1[1]-c2[1])**2 + (c1[2]-c2[2])**2;
 
-const hexToRgb = hex => Array.from({length:3}, (_,i)=>parseInt(hex.slice(2*i, 2*i+2), 16));
+const hexToRgb = hex => {
+  const h = parseHex(hex);
+  return Array.from({length:3}, (_,i)=>parseInt(h.slice(2*i, 2*i+2), 16));
+}
 
-const hexToOctants = hex => {
-  const [r,g,b] = Array.from({length:3}, (_,i)=>parseInt(hex.slice(2*i, 2*i+2), 16).toString(2).padStart(8,0))
+export const hexToOctants = hex => {
+  const h = parseHex(hex);
+  const [r,g,b] = Array.from({length:3}, (_,i)=>parseInt(h.slice(2*i, 2*i+2), 16).toString(2).padStart(8,0))
   return Array.from({length:8}, (_,i) => r[i]+g[i]+b[i]);
 }
 
@@ -17,7 +21,7 @@ export default class ColorOctant {
 
     if (!path.length) {
       this.closest = hex => {
-        const octants = hexToOctants(parseHex(hex));
+        const octants = hexToOctants(hex);
         let child = this;
         for (const octant of octants) {
           if (!child[octant] || !child[octant].colors.length) break;
@@ -26,10 +30,10 @@ export default class ColorOctant {
         }
 
         if (child.colors.length === 1) return child.colors[0];
-        const targ = hexToRgb(parseHex(hex))
+        const targ = hexToRgb(hex)
         let maxDist = Infinity, closest;
         child.colors.forEach(col => {
-          const c = hexToRgb(parseHex(col.hex));
+          const c = hexToRgb(col.hex);
           const d = dist(c, targ);
           if (d < maxDist) {
             maxDist = d;
@@ -42,7 +46,7 @@ export default class ColorOctant {
   }
 
   addAll(colors) {
-    colors.forEach(({hex, name}) => this.add({hex, name, octants: hexToOctants(parseHex(hex))}));
+    colors.forEach(({hex, name}) => this.add({hex, name, octants: hexToOctants(hex)}));
   }
 
   add(color) {
@@ -65,3 +69,4 @@ export default class ColorOctant {
     return this[octant];
   }
 }
+
