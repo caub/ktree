@@ -7,7 +7,7 @@ const hexToRgb = hex => {
   return Array.from({length:3}, (_,i)=>parseInt(h.slice(2*i, 2*i+2), 16));
 }
 
-export const hexToOctants = hex => {
+const hexToOctants = hex => {
   const h = parseHex(hex);
   const [r,g,b] = Array.from({length:3}, (_,i)=>parseInt(h.slice(2*i, 2*i+2), 16).toString(2).padStart(8,0))
   return Array.from({length:8}, (_,i) => r[i]+g[i]+b[i]);
