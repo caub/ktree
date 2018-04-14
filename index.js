@@ -31,14 +31,18 @@ const buildOctree = (depth, n = 0) =>
         '111': buildOctree(depth, n + 1),
       };
 
-let root;
+export let __root;
 
-export const init = () => {
-  root = buildOctree(7); // 8 would go down to leaves, but it's too intense for nodejs
+/**
+ * init __root
+ * @param {*} depth 
+ */
+export const init = ({depth = 7} = {}) => {
+  __root = buildOctree(depth); // 8 would go down to leaves, but it's too intense for nodejs
 };
 
-export const add = cols => {
-  if (!root) init();
+export const add = (cols, {depth, reset}) => {
+  if (!__root || reset) init(depth);
   if (Array.isArray(cols)) {
     return cols.forEach(c => _add(c)); // might want to precmpute rgb to spped up search
   }
@@ -46,7 +50,7 @@ export const add = cols => {
 };
 
 const _add = col => {
-  let node = root;
+  let node = __root;
   const bin = hexToBin(col.hex);
   for (let i = 0; i < 7; i++) {
     const k = bin[0][i] + bin[1][i] + bin[2][i];
@@ -84,7 +88,7 @@ const neighbors = ([r, g, b], dir) => {
   return nodes;
 };
 
-const getNodeFromCoords = ([r, g, b]) => [...r].reduce((node, ri, i) => node[ri + g[i] + b[i]], root);
+const getNodeFromCoords = ([r, g, b]) => [...r].reduce((node, ri, i) => node[ri + g[i] + b[i]], __root);
 
 export const closest = hex => {
   const rgb = hexToRgb(hex);
@@ -100,7 +104,7 @@ export const closest = hex => {
   }
   // search in all
   const colors = ['000', '001', '010', '011', '100', '101', '110', '111'].reduce(
-    (cs, c) => cs.concat(root[c].colors),
+    (cs, c) => cs.concat(__root[c].colors),
     [],
   );
   if (colors.length) {

@@ -1,5 +1,11 @@
 ## Find efficiently the closest hex color
 
+### API
+
+- `add(colors /*array of {hex, name}*/, {depth: Int, reset: Boolean} /*optional*/)`: add an array of colors (`add` calls init if it was not initialized yet)
+- `closest(hex)`: Search for the closest color
+- `init({depth: Int = 7})`: Init the tree at a given depth (default 7)
+
 ```js
 import colorNames from 'color-names';
 import { add, closest } from 'color-octree';
@@ -12,3 +18,8 @@ console.log(closest('5544df'));
 ```
 
 [live example](https://repl.it/@caub/closest-color)
+
+
+### Notice
+
+It uses `String.prototype.padStart`, it exist on node 8.11 and recent browsers, but you might still want to polyfill it (see polyfill.io or es-shims) 

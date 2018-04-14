@@ -6,7 +6,7 @@
   "browser": "dist/umd.js",
   "module": "dist/es.js",
   "scripts": {
-    "test": "node test",
+    "test": "babel-node index.spec",
     "prepare": "npx rollup -c"
   },
   "repository": {
@@ -28,6 +28,7 @@
   "homepage": "https://github.com/caub/color-octree#readme",
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.44",
+    "@babel/node": "^7.0.0-beta.44",
     "@babel/preset-env": "^7.0.0-beta.44",
     "color-name-list": "^3.10.0",
     "color-names": "^2.0.0",
