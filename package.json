@@ -1,6 +1,6 @@
 {
   "name": "color-octree",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Get closest hex color",
   "main": "dist/cjs.js",
   "browser": "dist/umd.js",

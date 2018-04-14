@@ -119,5 +119,5 @@ const closestIn = (rgb, colors) => {
       best = col;
     }
   });
-  return { ...best, d: minDist };
+  return { ...best, d: minDist ** 0.5 };
 };
