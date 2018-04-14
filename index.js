@@ -42,7 +42,7 @@ export const init = ({depth = 7} = {}) => {
 };
 
 export const add = (cols, {depth, reset}) => {
-  if (!__root || reset) init(depth);
+  if (!__root || reset) init({depth});
   if (Array.isArray(cols)) {
     return cols.forEach(c => _add(c)); // might want to precmpute rgb to spped up search
   }
@@ -55,6 +55,7 @@ const _add = col => {
   for (let i = 0; i < 7; i++) {
     const k = bin[0][i] + bin[1][i] + bin[2][i];
     node = node[k];
+    if (!node) break;
     node.colors.push(col);
   }
 };
@@ -88,7 +89,14 @@ const neighbors = ([r, g, b], dir) => {
   return nodes;
 };
 
-const getNodeFromCoords = ([r, g, b]) => [...r].reduce((node, ri, i) => node[ri + g[i] + b[i]], __root);
+const getNodeFromCoords = ([r, g, b]) => {
+  let node = __root;
+  for (let i = 0; i < 7; i++) {
+    if (!node[r[i] + g[i] + b[i]]) break;
+    node = node[r[i] + g[i] + b[i]];
+  }
+  return node;
+};
 
 export const closest = hex => {
   const rgb = hexToRgb(hex);

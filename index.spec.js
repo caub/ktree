@@ -16,7 +16,7 @@ console.timeEnd('add');
 
 console.time('closest');
 const col = closest('556');
-console.time('closest');
+console.timeEnd('closest');
 
 assert.deepEqual(col, { name: 'Test', hex: '557', d: 17 });
 
@@ -33,7 +33,7 @@ console.timeEnd('closest2');
 assert.deepEqual(col2, { hex: '#585562', name: 'Scarpa Flow', d: 5 });
 
 console.time('add3');
-add(colorNameList, {reset: true});
+add(colorNameList, {depth: 6, reset: true});
 console.timeEnd('add3');
 
 console.time('closest3');
