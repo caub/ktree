@@ -42,7 +42,7 @@ export let __root;
 export const init = (depth = 7) => {
   if (!(depth >= 0 && depth < 8)) throw new Error('depth must be between 0 and 7');
   __root = {};
-  __root = buildOctree(depth); // 8 would go down to leaves, but it's too intense for nodejs
+  __root = {...buildOctree(depth), depth}; // 8 would go down to leaves, but it's too intense for nodejs
 };
 
 export const add = (cols, depth) => {
@@ -56,10 +56,9 @@ export const add = (cols, depth) => {
 const _add = col => {
   let node = __root;
   const bin = hexToBin(parseHex(col.hex));
-  for (let i = 0; i < 7; i++) {
+  for (let i = 0; i < __root.depth; i++) {
     const k = bin[0][i] + bin[1][i] + bin[2][i];
     node = node[k];
-    if (!node) break;
     node.colors.push(col);
   }
 };
@@ -67,10 +66,9 @@ const _add = col => {
 export const remove = hex => {
   let node = __root;
   const bin = hexToBin(parseHex(hex));
-  for (let i = 0; i < 7; i++) {
+  for (let i = 0; i < __root.depth; i++) {
     const k = bin[0][i] + bin[1][i] + bin[2][i];
     node = node[k];
-    if (!node) break;
     const idx = node.colors.findIndex(c => c.hex === hex);
     if (idx >= 0) {
       node.colors = [...node.colors.slice(0,idx), ...node.colors.slice(idx+1)]; // don't like splice
@@ -109,8 +107,7 @@ const neighbors = ([r, g, b], dir) => {
 
 const getNodeFromCoords = ([r, g, b]) => {
   let node = __root;
-  for (let i = 0; i < 7; i++) {
-    if (!node[r[i] + g[i] + b[i]]) break;
+  for (let i = 0; i < Math.min(__root.depth, r.length); i++) {
     node = node[r[i] + g[i] + b[i]];
   }
   return node;
@@ -120,7 +117,7 @@ export const closest = hex => {
   const rgb = hexToRgb(parseHex(hex));
   const [r, g, b] = rgbToBin(rgb);
   // reminder: we don't/can't store level 8
-  for (let i = 7; i > 0; i--) {
+  for (let i = __root.depth; i > 0; i--) {
     const coords = [r.slice(0, i), g.slice(0, i), b.slice(0, i)]; // take one resolution higher, since we don't/can't store level 8
     const ns = neighbors(coords, r[i] + g[i] + b[i]);
     const colors = ns.map(n => getNodeFromCoords(n).colors).reduce((cs, c) => cs.concat(c), []);
