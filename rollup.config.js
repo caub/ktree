@@ -1,8 +1,4 @@
-import fs from 'fs';
 import babel from 'rollup-plugin-babel';
-
-const babelrc = JSON.parse(fs.readFileSync('./.babelrc') + '');
-babelrc.presets[0][1].modules = false;
 
 export default {
   input: 'index.js',
@@ -24,7 +20,6 @@ export default {
   plugins: [
     babel({
       exclude: 'node_modules/**',
-      ...babelrc
     }),
   ],
 };

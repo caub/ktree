@@ -7,7 +7,7 @@
   "module": "dist/es.js",
   "scripts": {
     "test": "babel-node index.spec",
-    "prepare": "npx rollup -c"
+    "prepare": "NODE_ENV=rollup npx rollup -c"
   },
   "repository": {
     "type": "git",
