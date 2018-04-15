@@ -3,10 +3,12 @@ export const parseHex = hex =>
     ? hex[hex.length - 3].repeat(2) + hex[hex.length - 2].repeat(2) + hex[hex.length - 1].repeat(2)
     : hex.slice(-6);
 
-const hexToRgb = hex => {
-  const h = parseHex(hex);
-  return Array.from({ length: 3 }, (_, i) => parseInt(h.slice(2 * i, 2 * i + 2), 16));
-};
+const hexToRgb = hex => [
+  parseInt(hex.slice(0, 2), 16),
+  parseInt(hex.slice(2, 4), 16),
+  parseInt(hex.slice(4, 6), 16)
+];
+
 const distRgb = (c1, c2) => (c1[0] - c2[0]) ** 2 + (c1[1] - c2[1]) ** 2 + (c1[2] - c2[2]) ** 2;
 
 export const distHex = (a, b) => distRgb(hexToRgb(a), hexToRgb(b));
@@ -46,14 +48,14 @@ export const init = (depth = 7) => {
 export const add = (cols, depth) => {
   if (!__root) init(depth);
   if (Array.isArray(cols)) {
-    return cols.forEach(c => _add(c)); // might want to precmpute rgb to spped up search
+    return cols.forEach(c => _add(c)); // might want to precompute rgb to speed up search
   }
   _add(cols);
 };
 
 const _add = col => {
   let node = __root;
-  const bin = hexToBin(col.hex);
+  const bin = hexToBin(parseHex(col.hex));
   for (let i = 0; i < 7; i++) {
     const k = bin[0][i] + bin[1][i] + bin[2][i];
     node = node[k];
@@ -64,14 +66,14 @@ const _add = col => {
 
 export const remove = hex => {
   let node = __root;
-  const bin = hexToBin(hex);
+  const bin = hexToBin(parseHex(hex));
   for (let i = 0; i < 7; i++) {
     const k = bin[0][i] + bin[1][i] + bin[2][i];
     node = node[k];
     if (!node) break;
     const idx = node.colors.findIndex(c => c.hex === hex);
     if (idx >= 0) {
-      node.colors = [...node.colors.slice(0,idx), ...node.colors.slice(idx+1)]; // I don't like splice
+      node.colors = [...node.colors.slice(0,idx), ...node.colors.slice(idx+1)]; // don't like splice
     }
   }
 }
@@ -115,22 +117,22 @@ const getNodeFromCoords = ([r, g, b]) => {
 };
 
 export const closest = hex => {
-  const rgb = hexToRgb(hex);
+  const rgb = hexToRgb(parseHex(hex));
   const [r, g, b] = rgbToBin(rgb);
   // reminder: we don't/can't store level 8
   for (let i = 7; i > 0; i--) {
     const coords = [r.slice(0, i), g.slice(0, i), b.slice(0, i)]; // take one resolution higher, since we don't/can't store level 8
     const ns = neighbors(coords, r[i] + g[i] + b[i]);
-    const colors = ns.reduce((cs, n) => cs.concat(getNodeFromCoords(n).colors), []);
+    const colors = ns.map(n => getNodeFromCoords(n).colors).reduce((cs, c) => cs.concat(c), []);
     if (colors.length) {
       return closestIn(rgb, colors);
     }
   }
   // search in all
-  const colors = ['000', '001', '010', '011', '100', '101', '110', '111'].reduce(
-    (cs, c) => cs.concat(__root[c].colors),
-    [],
-  );
+
+  const colors = ['000', '001', '010', '011', '100', '101', '110', '111']
+    .map(node => __root[node].colors)
+    .reduce((cs, c) => cs.concat(c), []);
   if (colors.length) {
     return closestIn(rgb, colors);
   }
@@ -141,7 +143,7 @@ const closestIn = (rgb, colors) => {
   let minDist = Infinity,
     best;
   colors.forEach(col => {
-    const d = distRgb(hexToRgb(col.hex), rgb);
+    const d = distRgb(hexToRgb(parseHex(col.hex)), rgb);
     if (d < minDist) {
       minDist = d;
       best = col;
