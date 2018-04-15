@@ -17,12 +17,19 @@ const rgbToBin = rgb => rgb.map(x => x.toString(2).padStart(8, 0));
 
 export const hexToBin = hex => rgbToBin(hexToRgb(hex));
 
+// 50% faster than new Set([...s1, ...s2])
+const concatSet = (s1, s2) => {
+  const s = new Set(s1);
+  s2.forEach(v => s.add(v));
+  return s;
+};
+
 const buildOctree = (depth, n = 0) =>
   n > depth
     ? undefined
     : {
         n,
-        colors: [],
+        hexs: new Set(),
         '000': buildOctree(depth, n + 1),
         '001': buildOctree(depth, n + 1),
         '010': buildOctree(depth, n + 1),
@@ -34,6 +41,7 @@ const buildOctree = (depth, n = 0) =>
       };
 
 export let __root;
+export let __hexMap; // Map hex => {hex, name} color entries
 
 /**
  * init __root
@@ -42,8 +50,9 @@ export let __root;
 export const init = (depth = 7) => {
   if (!(depth >= 0 && depth < 8)) throw new Error('depth must be between 0 and 7');
   // 8 would go down to leaves, but it's too intense for nodejs
+  __hexMap = new Map();
   __root = {};
-  __root = {...buildOctree(depth), depth, colors: undefined}; // colors are not stored at top-level
+  __root = {...buildOctree(depth), depth, hexs: undefined}; // hexs are not stored at top-level
 };
 
 export const add = (cols, depth) => {
@@ -55,25 +64,25 @@ export const add = (cols, depth) => {
 };
 
 const _add = col => {
+  const hex = parseHex(col.hex);
+  __hexMap.set(hex, col);
   let node = __root;
-  const bin = hexToBin(parseHex(col.hex));
+  const bin = hexToBin(hex);
   for (let i = 0; i < __root.depth; i++) {
     const k = bin[0][i] + bin[1][i] + bin[2][i];
     node = node[k];
-    node.colors.push(col);
+    node.hexs.add(hex);
   }
 };
 
-export const remove = hex => {
+export const remove = _hex => {
   let node = __root;
-  const bin = hexToBin(parseHex(hex));
+  const hex = parseHex(_hex);
+  const bin = hexToBin(hex);
   for (let i = 0; i < __root.depth; i++) {
     const k = bin[0][i] + bin[1][i] + bin[2][i];
     node = node[k];
-    const idx = node.colors.findIndex(c => c.hex === hex);
-    if (idx >= 0) {
-      node.colors = [...node.colors.slice(0,idx), ...node.colors.slice(idx+1)]; // don't like splice
-    }
+    node.hexs.delete(hex);
   }
 }
 
@@ -114,38 +123,39 @@ const getNodeFromCoords = ([r, g, b]) => {
   return node;
 };
 
-export const closest = hex => {
-  const rgb = hexToRgb(parseHex(hex));
-  const [r, g, b] = rgbToBin(rgb);
+export const closest = _hex => {
+  const hex = parseHex(_hex);
+  const [r, g, b] = hexToBin(hex);
   // reminder: we don't/can't store level 8
   for (let i = __root.depth; i > 0; i--) {
     const coords = [r.slice(0, i), g.slice(0, i), b.slice(0, i)]; // take one resolution higher, since we don't/can't store level 8
     const ns = neighbors(coords, r[i] + g[i] + b[i]);
-    const colors = ns.map(n => getNodeFromCoords(n).colors).reduce((cs, c) => cs.concat(c), []);
-    if (colors.length) {
-      return closestIn(rgb, colors);
+    const hexs = ns.map(node => getNodeFromCoords(node).hexs).reduce((cs, s) => concatSet(cs, s));
+    if (hexs.size) {
+      return closestIn(hex, hexs);
     }
   }
   // search in all
-
-  const colors = ['000', '001', '010', '011', '100', '101', '110', '111']
-    .map(node => __root[node].colors)
-    .reduce((cs, c) => cs.concat(c), []);
-  if (colors.length) {
-    return closestIn(rgb, colors);
+  const hexs = ['000', '001', '010', '011', '100', '101', '110', '111']
+    .map(k => __root[k].hexs)
+    .reduce((cs, s) => concatSet(cs, s));
+  if (hexs.size) {
+    return closestIn(hex, hexs);
   }
   console.log(`Couldn't find any color`);
 };
 
-const closestIn = (rgb, colors) => {
+const closestIn = (hex, hexs) => {
+  if (hexs.has(hex)) return hex;
+  const rgb = hexToRgb(hex);
   let minDist = Infinity,
     best;
-  colors.forEach(col => {
-    const d = distRgb(hexToRgb(parseHex(col.hex)), rgb);
+    hexs.forEach(hex => {
+    const d = distRgb(hexToRgb(hex), rgb);
     if (d < minDist) {
       minDist = d;
-      best = col;
+      best = hex;
     }
   });
-  return { ...best, d: minDist ** 0.5 };
+  return { hex: best, ...__hexMap.get(best), d: minDist ** 0.5 };
 };
