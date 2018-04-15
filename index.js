@@ -35,14 +35,16 @@ export let __root;
 
 /**
  * init __root
- * @param {*} depth 
+ * @param {*} depth
  */
-export const init = ({depth = 7} = {}) => {
+export const init = (depth = 7) => {
+  if (!(depth >= 0 && depth < 8)) throw new Error('depth must be between 0 and 7');
+  __root = {};
   __root = buildOctree(depth); // 8 would go down to leaves, but it's too intense for nodejs
 };
 
-export const add = (cols, {depth, reset}) => {
-  if (!__root || reset) init({depth});
+export const add = (cols, depth) => {
+  if (!__root) init(depth);
   if (Array.isArray(cols)) {
     return cols.forEach(c => _add(c)); // might want to precmpute rgb to spped up search
   }
@@ -59,6 +61,20 @@ const _add = col => {
     node.colors.push(col);
   }
 };
+
+export const remove = hex => {
+  let node = __root;
+  const bin = hexToBin(hex);
+  for (let i = 0; i < 7; i++) {
+    const k = bin[0][i] + bin[1][i] + bin[2][i];
+    node = node[k];
+    if (!node) break;
+    const idx = node.colors.findIndex(c => c.hex === hex);
+    if (idx >= 0) {
+      node.colors = [...node.colors.slice(0,idx), ...node.colors.slice(idx+1)]; // I don't like splice
+    }
+  }
+}
 
 /**
  * get neighbors of a given node
