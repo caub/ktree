@@ -41,8 +41,9 @@ export let __root;
  */
 export const init = (depth = 7) => {
   if (!(depth >= 0 && depth < 8)) throw new Error('depth must be between 0 and 7');
+  // 8 would go down to leaves, but it's too intense for nodejs
   __root = {};
-  __root = {...buildOctree(depth), depth}; // 8 would go down to leaves, but it's too intense for nodejs
+  __root = {...buildOctree(depth), depth, colors: undefined}; // colors are not stored at top-level
 };
 
 export const add = (cols, depth) => {
