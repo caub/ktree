@@ -21,17 +21,17 @@ const buildOctree = (depth, n = 0) =>
   n > depth
     ? undefined
     : {
-        n,
-        colors: [],
-        '000': buildOctree(depth, n + 1),
-        '001': buildOctree(depth, n + 1),
-        '010': buildOctree(depth, n + 1),
-        '011': buildOctree(depth, n + 1),
-        '100': buildOctree(depth, n + 1),
-        '101': buildOctree(depth, n + 1),
-        '110': buildOctree(depth, n + 1),
-        '111': buildOctree(depth, n + 1),
-      };
+      n,
+      colors: [],
+      '000': buildOctree(depth, n + 1),
+      '001': buildOctree(depth, n + 1),
+      '010': buildOctree(depth, n + 1),
+      '011': buildOctree(depth, n + 1),
+      '100': buildOctree(depth, n + 1),
+      '101': buildOctree(depth, n + 1),
+      '110': buildOctree(depth, n + 1),
+      '111': buildOctree(depth, n + 1),
+    };
 
 export let __root;
 
@@ -43,7 +43,7 @@ export const init = (depth = 7) => {
   if (!(depth >= 0 && depth < 8)) throw new Error('depth must be between 0 and 7');
   // 8 would go down to leaves, but it's too intense for nodejs
   __root = {};
-  __root = {...buildOctree(depth), depth, colors: undefined}; // colors are not stored at top-level
+  __root = { ...buildOctree(depth), depth, colors: undefined }; // colors are not stored at top-level
 };
 
 export const add = (cols, depth) => {
@@ -72,7 +72,7 @@ export const remove = hex => {
     node = node[k];
     const idx = node.colors.findIndex(c => c.hex === hex);
     if (idx >= 0) {
-      node.colors = [...node.colors.slice(0,idx), ...node.colors.slice(idx+1)]; // don't like splice
+      node.colors = [...node.colors.slice(0, idx), ...node.colors.slice(idx + 1)]; // don't like splice
     }
   }
 }
@@ -86,14 +86,14 @@ const neighbors = ([r, g, b], dir) => {
   const gDec = parseInt(g, 2);
   const bDec = parseInt(b, 2);
   const nodes = [];
-  const n = r.length;
+  const n = r.length, N = 2 ** n;
   for (let dr = dir[0] - 1; dr <= dir[0]; dr++) {
     for (let dg = dir[1] - 1; dg <= dir[1]; dg++) {
       for (let db = dir[2] - 1; db <= dir[2]; db++) {
         const R = rDec + dr,
           G = gDec + dg,
           B = bDec + db;
-        if (R >= 0 && R < 2 ** n && G >= 0 && G < 2 ** n && B >= 0 && B < 2 ** n) {
+        if (R >= 0 && R < N && G >= 0 && G < N && B >= 0 && B < N) {
           nodes.push([
             R.toString(2).padStart(n, 0),
             G.toString(2).padStart(n, 0),

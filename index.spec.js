@@ -11,7 +11,7 @@ assert.equal(parseHex('#88e70566'), 'e70566');
 
 
 console.time('add');
-add([{name: 'Test', hex: '557'}, {name: 'Test_', hex: '656'}]);
+add([{ name: 'Test', hex: '557' }, { name: 'Test_', hex: '656' }]);
 console.timeEnd('add');
 
 console.time('closest');
@@ -21,9 +21,9 @@ console.timeEnd('closest');
 assert.deepEqual(col, { name: 'Test', hex: '557', d: 17 });
 
 
- // # color-names (148 colors)
+// # color-names (148 colors)
 
-const colors = Object.entries(colorNames).map(([hex, name]) => ({hex, name}));
+const colors = Object.entries(colorNames).map(([hex, name]) => ({ hex, name }));
 
 console.time('add2');
 init(); // init(7) by default
@@ -37,7 +37,7 @@ console.timeEnd('closest2');
 assert.deepEqual(col2, { hex: '#585562', name: 'Scarpa Flow', d: 5 });
 
 
- // # color-name-list (17k colors)
+// # color-name-list (17k colors)
 
 console.time('add3');
 init(7);
@@ -58,7 +58,7 @@ console.time('closest31');
 const col31 = closest('556');
 console.timeEnd('closest31');
 
-assert.deepEqual(col31, { name: 'Inky Storm', hex: '#535266', d: 3.605551275463989  });
+assert.deepEqual(col31, { name: 'Inky Storm', hex: '#535266', d: 3.605551275463989 });
 
 console.time('remove32');
 remove('#535266');
