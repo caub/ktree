@@ -121,7 +121,7 @@ export const closest = hex => {
   for (let i = __root.depth; i > 0; i--) {
     const coords = [r.slice(0, i), g.slice(0, i), b.slice(0, i)]; // take one resolution higher, since we don't/can't store level 8
     const ns = neighbors(coords, r[i] + g[i] + b[i]);
-    const colors = ns.map(n => getNodeFromCoords(n).colors).reduce((cs, c) => cs.concat(c), []);
+    const colors = ns.map(n => getNodeFromCoords(n).colors).reduce((cs, c) => cs.concat(c));
     if (colors.length) {
       return closestIn(rgb, colors);
     }
@@ -130,7 +130,7 @@ export const closest = hex => {
 
   const colors = ['000', '001', '010', '011', '100', '101', '110', '111']
     .map(node => __root[node].colors)
-    .reduce((cs, c) => cs.concat(c), []);
+    .reduce((cs, c) => cs.concat(c));
   if (colors.length) {
     return closestIn(rgb, colors);
   }
@@ -138,14 +138,14 @@ export const closest = hex => {
 };
 
 const closestIn = (rgb, colors) => {
-  let minDist = Infinity,
-    best;
+  let dist = Infinity,
+    color;
   colors.forEach(col => {
     const d = distRgb(hexToRgb(parseHex(col.hex)), rgb);
-    if (d < minDist) {
-      minDist = d;
-      best = col;
+    if (d < dist) {
+      dist = d;
+      color = col;
     }
   });
-  return { ...best, d: minDist ** 0.5 };
+  return { ...color, d: dist ** .5 };
 };

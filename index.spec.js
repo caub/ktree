@@ -76,14 +76,14 @@ assert.deepEqual(col32, {
 
 
 /*
-add: 2614.124ms
-closest: 0.762ms
-add2: 2233.753ms
-closest2: 0.187ms
-add3: 2620.856ms
-closest3: 0.152ms
-remove31: 0.646ms
-closest31: 0.115ms
-remove32: 0.427ms
-closest32: 0.179ms
+add: 2548.424ms
+closest: 0.808ms
+add2: 2283.033ms
+closest2: 0.195ms
+add3: 2207.895ms
+closest3: 0.115ms
+remove31: 0.755ms
+closest31: 0.083ms
+remove32: 0.383ms
+closest32: 0.120ms
  */
