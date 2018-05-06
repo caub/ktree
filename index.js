@@ -1,7 +1,9 @@
 export const parseHex = hex =>
   hex.length < 6
     ? hex[hex.length - 3].repeat(2) + hex[hex.length - 2].repeat(2) + hex[hex.length - 1].repeat(2)
-    : hex.slice(-6);
+    : hex.length < 8 ?
+      hex.slice(-6)
+      : hex.slice(-8).slice(0, 6); // hexa (with alpha at the end)
 
 const hexToRgb = hex => [
   parseInt(hex.slice(0, 2), 16),
@@ -43,7 +45,7 @@ export const init = (depth = 7) => {
   if (!(depth >= 0 && depth < 8)) throw new Error('depth must be between 0 and 7');
   // 8 would go down to leaves, but it's too intense for nodejs
   __root = {};
-  __root = { ...buildOctree(depth), depth, colors: undefined }; // colors are not stored at top-level
+  __root = {...buildOctree(depth), depth, colors: undefined}; // colors are not stored at top-level
 };
 
 export const add = (cols, depth) => {
@@ -147,5 +149,5 @@ const closestIn = (rgb, colors) => {
       color = col;
     }
   });
-  return { ...color, d: dist ** .5 };
+  return {...color, d: dist ** .5};
 };

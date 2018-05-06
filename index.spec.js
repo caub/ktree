@@ -1,89 +1,76 @@
 import assert from 'assert';
 import colorNameList from 'color-name-list';
 import colorNames from 'color-names';
-import { add, closest, init, remove, parseHex, distHex } from './index';
+import {add, closest, init, remove, parseHex, distHex} from './index';
 
 assert.equal(parseHex('#bbb'), 'bbbbbb');
 assert.equal(parseHex('aaa'), 'aaaaaa')
 assert.equal(parseHex('e70566'), 'e70566')
 assert.equal(parseHex('#e70566'), 'e70566');
-assert.equal(parseHex('#88e70566'), 'e70566');
+assert.equal(parseHex('#e7056688'), 'e70566');
 
+console.log('## basic');
 
 console.time('add');
-add([{ name: 'Test', hex: '557' }, { name: 'Test_', hex: '656' }]);
+add([{name: 'Test', hex: '557'}, {name: 'Test_', hex: '656'}]);
 console.timeEnd('add');
 
 console.time('closest');
 const col = closest('556');
 console.timeEnd('closest');
 
-assert.deepEqual(col, { name: 'Test', hex: '557', d: 17 });
+assert.deepEqual(col, {name: 'Test', hex: '557', d: 17});
 
 
-// # color-names (148 colors)
+console.log('## color-names (148 colors)');
 
-const colors = Object.entries(colorNames).map(([hex, name]) => ({ hex, name }));
+const colors = Object.entries(colorNames).map(([hex, name]) => ({hex, name}));
 
-console.time('add2');
+console.time('add');
 init(); // init(7) by default
 add(colors);
-console.timeEnd('add2');
+console.timeEnd('add');
 
-console.time('closest2');
+console.time('closest');
 const col2 = closest('556');
-console.timeEnd('closest2');
+console.timeEnd('closest');
 
-assert.deepEqual(col2, { hex: '#585562', name: 'Scarpa Flow', d: 5 });
+assert.deepEqual(col2, {hex: '#585562', name: 'Scarpa Flow', d: 5});
 
 
-// # color-name-list (17k colors)
+console.log('## color-name-list (17k colors)');
 
-console.time('add3');
+console.time('add');
 init(7);
 add(colorNameList);
-console.timeEnd('add3');
+console.timeEnd('add');
 
-console.time('closest3');
+console.time('closest');
 const col3 = closest('556');
-console.timeEnd('closest3');
+console.timeEnd('closest');
 
-assert.deepEqual(col3, { name: 'Freefall', hex: '#565266', d: 3.1622776601683795 });
+assert.deepEqual(col3, {name: 'Freefall', hex: '#565266', d: 3.1622776601683795});
 
-console.time('remove31');
+console.time('remove');
 remove('#565266');
-console.timeEnd('remove31');
+console.timeEnd('remove');
 
-console.time('closest31');
+console.time('closest');
 const col31 = closest('556');
-console.timeEnd('closest31');
+console.timeEnd('closest');
 
-assert.deepEqual(col31, { name: 'Inky Storm', hex: '#535266', d: 3.605551275463989 });
+assert.deepEqual(col31, {name: 'Inky Storm', hex: '#535266', d: 3.605551275463989});
 
-console.time('remove32');
+console.time('remove');
 remove('#535266');
-console.timeEnd('remove32');
+console.timeEnd('remove');
 
-console.time('closest32');
+console.time('closest');
 const col32 = closest('556');
-console.timeEnd('closest32');
+console.timeEnd('closest');
 
 assert.deepEqual(col32, {
   name: `Black Dragon's Caldron`,
   hex: '#545562',
   d: 4.123105625617661
 });
-
-
-/*
-add: 2548.424ms
-closest: 0.808ms
-add2: 2283.033ms
-closest2: 0.195ms
-add3: 2207.895ms
-closest3: 0.115ms
-remove31: 0.755ms
-closest31: 0.083ms
-remove32: 0.383ms
-closest32: 0.120ms
- */
