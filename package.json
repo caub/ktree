@@ -1,6 +1,6 @@
 {
   "name": "color-octree",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "Get closest hex color",
   "main": "dist/cjs.js",
   "browser": "dist/umd.js",
@@ -27,13 +27,13 @@
   },
   "homepage": "https://github.com/caub/color-octree#readme",
   "devDependencies": {
-    "@babel/core": "^7.0.0-beta.44",
-    "@babel/node": "^7.0.0-beta.44",
-    "@babel/preset-env": "^7.0.0-beta.44",
-    "color-name-list": "^3.10.0",
+    "@babel/core": "^7.0.0-beta.46",
+    "@babel/node": "^7.0.0-beta.46",
+    "@babel/preset-env": "^7.0.0-beta.46",
+    "color-name-list": "^3.32.0",
     "color-names": "^2.0.0",
     "colorutil": "^4.1.2",
-    "rollup": "^0.57.1",
+    "rollup": "^0.58.2",
     "rollup-plugin-babel": "^4.0.0-beta.4"
   },
   "dependencies": {}
