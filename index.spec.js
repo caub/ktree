@@ -22,7 +22,7 @@ console.timeEnd('closest');
 assert.deepEqual(col, {name: 'Test', hex: '557', d: 17});
 
 
-console.log('## color-names (148 colors)');
+console.log('\n## color-names (148 colors)');
 
 const colors = Object.entries(colorNames).map(([hex, name]) => ({hex, name}));
 
@@ -38,7 +38,7 @@ console.timeEnd('closest');
 assert.deepEqual(col2, {hex: '#585562', name: 'Scarpa Flow', d: 5});
 
 
-console.log('## color-name-list (17k colors)');
+console.log('\n## color-name-list (17k colors)');
 
 console.time('add');
 init(7);

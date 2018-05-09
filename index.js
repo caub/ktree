@@ -11,9 +11,9 @@ const hexToRgb = hex => [
   parseInt(hex.slice(4, 6), 16)
 ];
 
-const distRgb = (c1, c2) => (c1[0] - c2[0]) ** 2 + (c1[1] - c2[1]) ** 2 + (c1[2] - c2[2]) ** 2;
+const dist = (c1, c2) => (c1[0] - c2[0]) ** 2 + (c1[1] - c2[1]) ** 2 + (c1[2] - c2[2]) ** 2;
 
-export const distHex = (a, b) => distRgb(hexToRgb(a), hexToRgb(b));
+export const distHex = (a, b) => dist(hexToRgb(a), hexToRgb(b));
 
 const rgbToBin = rgb => rgb.map(x => x.toString(2).padStart(8, 0));
 
@@ -72,10 +72,7 @@ export const remove = hex => {
   for (let i = 0; i < __root.depth; i++) {
     const k = bin[0][i] + bin[1][i] + bin[2][i];
     node = node[k];
-    const idx = node.colors.findIndex(c => c.hex === hex);
-    if (idx >= 0) {
-      node.colors = [...node.colors.slice(0, idx), ...node.colors.slice(idx + 1)]; // don't like splice
-    }
+    node.colors = node.colors.filter(c => c.hex !== hex);
   }
 }
 
@@ -140,14 +137,14 @@ export const closest = hex => {
 };
 
 const closestIn = (rgb, colors) => {
-  let dist = Infinity,
+  let minD = Infinity,
     color;
   colors.forEach(col => {
-    const d = distRgb(hexToRgb(parseHex(col.hex)), rgb);
-    if (d < dist) {
-      dist = d;
+    const d = dist(hexToRgb(parseHex(col.hex)), rgb);
+    if (d < minD) {
+      minD = d;
       color = col;
     }
   });
-  return {...color, d: dist ** .5};
+  return {...color, d: minD ** .5};
 };
