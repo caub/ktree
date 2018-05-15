@@ -13,49 +13,6 @@ if (!String.prototype.padStart) {
 // carterian products
 export const cart = (...args) => args.reduce((xs, a) => xs.flatMap(xsi => a.map(ai => [...xsi, ai])), [[]]);
 
-const NS2 = cart([-1, 0, 1], [-1, 0, 1]);
-
-export const neighbors2 = ([x, y]) => {
-  const xDec = parseInt(x, 2);
-  const yDec = parseInt(y, 2);
-  const nodes = [];
-  const n = x.length, N = 2 ** n;
-  for (let i = 0; i < NS2.length; i++) {
-    const X = xDec + NS2[i][0],
-      Y = yDec + NS2[i][1];
-    if (X >= 0 && X < N && Y >= 0 && Y < N) {
-      nodes.push([
-        X.toString(2).padStart(n, 0),
-        Y.toString(2).padStart(n, 0)
-      ]);
-    }
-  }
-  return nodes;
-};
-
-const NS3 = cart([-1, 0, 1], [-1, 0, 1], [-1, 0, 1]);
-
-export const neighbors3 = ([x, y, z]) => {
-  const xDec = parseInt(x, 2);
-  const yDec = parseInt(y, 2);
-  const zDec = parseInt(z, 2);
-  const nodes = [];
-  const n = x.length, N = 2 ** n;
-  for (let i = 0; i < NS3.length; i++) {
-    const X = xDec + NS3[i][0],
-      Y = yDec + NS3[i][1],
-      Z = zDec + NS3[i][2];
-    if (X >= 0 && X < N && Y >= 0 && Y < N && Z >= 0 && Z < N) {
-      nodes.push([
-        X.toString(2).padStart(n, 0),
-        Y.toString(2).padStart(n, 0),
-        Z.toString(2).padStart(n, 0)
-      ]);
-    }
-  }
-  return nodes;
-};
-
 const dist2 = (c1, c2) => (c1[0] - c2[0]) ** 2 + (c1[1] - c2[1]) ** 2;
 const dist3 = (c1, c2) => (c1[0] - c2[0]) ** 2 + (c1[1] - c2[1]) ** 2 + (c1[2] - c2[2]) ** 2;
 const distk = (c1, c2) => c1.map((_, i) => (c1[i] - c2[i]) ** 2).reduce((a, b) => a + b);
@@ -95,20 +52,55 @@ const getCoord2 = (bins, i) => bins[0][i] + bins[1][i];
 const getCoord3 = (bins, i) => bins[0][i] + bins[1][i] + bins[2][i];
 const getCoordk = (bins, i) => bins.map(s => s[i]).reduce((a, b) => a + b);
 
+// min distance between point coords and the bounding top-left, bottom-right points, with resolution res
+const minDist = (coords, tl, br, res) => Math.min(
+  ...coords.map(
+    (c, j) => Math.min(
+      c - (tl[j] << res),
+      (br[j] + 1) << res) - c
+  )
+);
+
 
 // generate a KTree class for a given k, for k=2, k=3 we try to put inline functions (defined above) for perf
 // todo bench if it's really faster
 export const ktree = k => {
 
   const KEYS = cart(...Array.from({ length: k }, () => [0, 1])).map(a => a.join('')); // node's children keys
+  const NS = cart(...Array.from({ length: k }, () => [-1, 0, 1])); // used for getNeighbors
 
-  let buildTree = buildTree2;
-  let getNeighbors = neighbors2;
-  if (k === 3) {
-    buildTree = buildTree3;
-    getNeighbors = neighbors3;
+  let buildTree;
+  let getNeighbors;
+  if (k === 2) {
+    buildTree = buildTree2
+    getNeighbors = ([x, y], N) => {
+      const nodes = [];
+      for (let i = 0; i < NS.length; i++) {
+        const X = x + NS[i][0],
+          Y = y + NS[i][1];
+        if (X >= 0 && X < N && Y >= 0 && Y < N) {
+          nodes.push([X, Y]);
+        }
+      }
+      return nodes;
+    };
   }
-  if (k > 3) {
+  else if (k === 3) {
+    buildTree = buildTree3;
+    getNeighbors = ([x, y, z], N) => {
+      const nodes = [];
+      for (let i = 0; i < NS.length; i++) {
+        const X = x + NS[i][0],
+          Y = y + NS[i][1],
+          Z = z + NS[i][2];
+        if (X >= 0 && X < N && Y >= 0 && Y < N && Z >= 0 && Z < N) {
+          nodes.push([X, Y, Z]);
+        }
+      }
+      return nodes;
+    };
+  }
+  else {
     buildTree = (depth, n = 0) =>
       n >= depth
         ? { n, items: [] }
@@ -117,18 +109,12 @@ export const ktree = k => {
           items: [],
           ...keys.reduce((o, key) => ({ ...o, [key]: buildTree(depth, n + 1) }), {})
         };
-    const NSk = cart(...Array.from({ length: k }, () => [-1, 0, 1]));
-    getNeighbors = bins => {
-      const decs = bins.map(b => parseInt(b, 2))
+    getNeighbors = (decs, N) => {
       const nodes = [];
-      const n = decs[0].length, N = 2 ** n;
-      for (let i = 0; i < NSk.length; i++) {
-        const X = xDec + NS3[i][0],
-          Y = yDec + NS3[i][1],
-          Z = zDec + NS3[i][2];
-        const coords = decs.map((dec, j) => dec + NSk[i][j]);
+      for (let i = 0; i < NS.length; i++) {
+        const coords = decs.map((dec, j) => dec + NS[i][j]);
         if (coords.every(coord => coord >= 0 && coord < N)) {
-          nodes.push(coords.map(coord => coord.toString(2).padStart(n, 0)));
+          nodes.push(coords);
         }
       }
       return nodes;
@@ -139,6 +125,7 @@ export const ktree = k => {
   const dist = k === 2 ? dist2 : k === 3 ? dist3 : distk;
 
   const getCoord = k === 2 ? getCoord2 : k === 3 ? getCoord3 : getCoordk;
+  const getCoordV2 = (coords, i) => coords.map(c => c & (1 << i) ? '1' : '0').reduce((a, b) => a + b);
 
   return class KTree {
     constructor(items = [], { length = 8, depth = 4, key = 'coords', transform = x => x } = {}) {
@@ -149,7 +136,7 @@ export const ktree = k => {
       this.root = buildTree(depth);
       this.add(items);
     }
-    coordsToBin(coords) {
+    coordsToBin(coords) { // todo rename, bin are also coords
       return coords.map(x => x.toString(2).padStart(this.len, 0));
     }
     add(items = []) {
@@ -187,26 +174,36 @@ export const ktree = k => {
     }
     closest(value) {
       const coords = this.transform(value);
-      const bins = this.coordsToBin(coords);
-      const node = this.getNodeFromCoords(bins);
+      const node = this.getNodeFromCoords(this.coordsToBin(coords)); // todo improve
       for (let i = node.n; i > 0; i--) {
-        const parentBins = bins.map(s => s.slice(0, i));
-        const ns = getNeighbors(parentBins, getCoord(bins, i));
-        const items = ns
-          .map(n => this.getNodeFromCoords(n).items)
+        const res = this.len - i;
+        const cs = getNeighbors(coords.map(c => c >> res), 1 << i);
+        const items = cs
+          .map(c => this.getNodeFromCoordsV2(c, res).items) // todo use flatMap
           .reduce((cs, c) => cs.concat(c));
         if (items.length) {
-          return this.closestIn(coords, items);
+          const item = this.closestIn(coords, items);
+          // here we must check if the minimal distance from the target to the neighbors square is more than d
+          // if yes return this value
+          const minDFromNeighbors = minDist(coords, cs[0], cs[cs.length - 1], res);
+          if (item.d <= minDFromNeighbors) return item;
         }
       }
       // search in all
       const items = KEYS
-        .map(k => this.root[k].items)
+        .map(k => this.root[k].items) // todo use flatMap
         .reduce((cs, c) => cs.concat(c));
       if (items.length) {
         return this.closestIn(coords, items);
       }
       // console.log(`Couldn't find any item`);
+    }
+    getNodeFromCoordsV2(coords, resolution = 0) {
+      let node = this.root;
+      for (let i = this.len - 1 - resolution; i >= 0 && node[KEYS[0]]; i--) {
+        node = node[getCoordV2(coords, i)];
+      }
+      return node;
     }
     getNodeFromCoords(coords) {
       let node = this.root;
@@ -225,7 +222,7 @@ export const ktree = k => {
           current = item;
         }
       });
-      return { ...current, d: minD ** .5 };
+      return { ...current, d: minD ** .5 }; // todo bench vs returning squared distance
     }
     toJSON(indent = '') {
       return JSON.stringify(prettify(this.root, this.key), null, indent);

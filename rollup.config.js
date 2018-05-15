@@ -18,8 +18,8 @@ export default {
     },
   ],
   plugins: [
-    babel({
-      exclude: 'node_modules/**',
-    }),
+    // babel({
+    //   exclude: 'node_modules/**',
+    // }),
   ],
 };

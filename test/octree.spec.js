@@ -2,7 +2,7 @@ import assert from 'assert';
 import hexToRgb from 'color-tf/hexToRgb';
 import colorNameList from 'color-name-list';
 import colorNames from 'color-names';
-import { Octree } from './index';
+import { Octree } from '../index';
 
 console.log('## basic');
 

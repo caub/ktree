@@ -15,7 +15,7 @@
 import colorNames from 'color-names';
 import { Octree } from 'ktree';
 
-// simple hex-to-rgb (assuming hex are not in short formats, else see https://unpkg.com/color-tf/hexToRgb.js)
+// simple hex-to-rgb (assuming no short formats, else see https://unpkg.com/color-tf/hexToRgb.js)
 const hexToRgb = s => [s.slice(-6, -4), s.slice(-4, -2), s.slice(-2)].map(x => parseInt(x, 16));
 
 // we expect an array of {name, [key]} objects, where key is configurable
