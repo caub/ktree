@@ -1,72 +1,82 @@
 import assert from 'assert';
+import hexToRgb from 'color-tf/hexToRgb';
 import colorNameList from 'color-name-list';
 import colorNames from 'color-names';
-import {add, closest, init, remove, parseHex, distHex} from './index';
-
-assert.equal(parseHex('#bbb'), 'bbbbbb');
-assert.equal(parseHex('aaa'), 'aaaaaa')
-assert.equal(parseHex('e70566'), 'e70566')
-assert.equal(parseHex('#e70566'), 'e70566');
-assert.equal(parseHex('#e7056688'), 'e70566');
+import { Octree } from './index';
 
 console.log('## basic');
 
 console.time('add');
-add([{name: 'Test', hex: '557'}, {name: 'Test_', hex: '656'}]);
+const t1 = new Octree(
+  [{ name: 'Test', coords: hexToRgb('557') }, { name: 'Test_', coords: hexToRgb('656') }]
+);
 console.timeEnd('add');
 
 console.time('closest');
-const col = closest('556');
+const col1 = t1.closest(hexToRgb('556'));
 console.timeEnd('closest');
 
-assert.deepEqual(col, {name: 'Test', hex: '557', d: 17});
+assert.deepEqual(col1, { name: 'Test', coords: hexToRgb('557'), d: 17 });
 
-
-console.log('\n## color-names (148 colors)');
-
-const colors = Object.entries(colorNames).map(([hex, name]) => ({hex, name}));
 
 console.time('add');
-init(); // init(7) by default
-add(colors);
+const t2 = new Octree(
+  [{ name: 'Test', hex: '557' }, { name: 'Test_', hex: '656' }],
+  { key: 'hex', transform: hexToRgb, depth: 1 }
+);
 console.timeEnd('add');
 
 console.time('closest');
-const col2 = closest('556');
+const col2 = t2.closest('556');
 console.timeEnd('closest');
 
-assert.deepEqual(col2, {hex: '#585562', name: 'Scarpa Flow', d: 5});
+assert.deepEqual(col2, { name: 'Test', hex: '557', d: 17 });
 
 
+// ###################
+console.log('\n## color-names (148 colors)');
+
+const colors = Object.entries(colorNames).map(([hex, name]) => ({ name, hex }));
+
+console.time('add');
+const t3 = new Octree(colors, { key: 'hex', transform: hexToRgb });
+console.timeEnd('add');
+
+console.time('closest');
+const col3 = t3.closest('556');
+console.timeEnd('closest');
+
+assert.deepEqual(col3, { hex: '#585562', name: 'Scarpa Flow', d: 5 });
+
+// ####################
 console.log('\n## color-name-list (17k colors)');
 
 console.time('add');
-init(7);
-add(colorNameList);
+const t4 = new Octree(colorNameList, { key: 'hex', transform: hexToRgb });
 console.timeEnd('add');
 
 console.time('closest');
-const col3 = closest('556');
+const col4 = t4.closest('556');
 console.timeEnd('closest');
 
-assert.deepEqual(col3, {name: 'Freefall', hex: '#565266', d: 3.1622776601683795});
+assert.deepEqual(col4, { name: 'Freefall', hex: '#565266', d: 3.1622776601683795 });
 
 console.time('remove');
-remove('#565266');
+t4.remove('#565266');
 console.timeEnd('remove');
 
 console.time('closest');
-const col31 = closest('556');
+const col31 = t4.closest('556');
 console.timeEnd('closest');
 
-assert.deepEqual(col31, {name: 'Inky Storm', hex: '#535266', d: 3.605551275463989});
+assert.deepEqual(col31, { name: 'Inky Storm', hex: '#535266', d: 3.605551275463989 });
 
 console.time('remove');
-remove('#535266');
+t4.remove('#535266');
 console.timeEnd('remove');
 
 console.time('closest');
-const col32 = closest('556');
+const col32 = t4.closest('556');
 console.timeEnd('closest');
 
 assert.deepEqual(col32, {

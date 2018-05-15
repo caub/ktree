@@ -1,21 +1,22 @@
 {
-  "name": "color-octree",
-  "version": "2.2.1",
-  "description": "Get closest hex color",
-  "main": "dist/cjs.js",
-  "browser": "dist/umd.js",
-  "module": "dist/es.js",
+  "name": "ktree",
+  "version": "3.0.0",
+  "description": "Get closest color",
+  "main": "dist/ktree.cjs.js",
+  "browser": "dist/ktree.umd.js",
+  "module": "dist/ktree.es.js",
   "scripts": {
-    "test": "babel-node index.spec",
-    "prepare": "NODE_ENV=rollup npx rollup -c"
+    "test": "nyc babel-node index.spec",
+    "coverage": "nyc report --reporter=lcov > coverage.lcov && codecov",
+    "build": "NODE_ENV=rollup npx rollup -c",
+    "prepare": "npm run build"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/caub/color-octree.git"
+    "url": "git+https://github.com/caub/ktree.git"
   },
   "keywords": [
     "color",
-    "hex",
     "closest",
     "search",
     "octree"
@@ -23,17 +24,20 @@
   "author": "caub",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/caub/color-octree/issues"
+    "url": "https://github.com/caub/ktree/issues"
   },
-  "homepage": "https://github.com/caub/color-octree#readme",
+  "homepage": "https://github.com/caub/ktree#readme",
   "devDependencies": {
-    "@babel/core": "^7.0.0-beta.46",
-    "@babel/node": "^7.0.0-beta.46",
-    "@babel/preset-env": "^7.0.0-beta.46",
-    "color-name-list": "^3.32.0",
+    "@babel/core": "^7.0.0-beta.47",
+    "@babel/node": "^7.0.0-beta.47",
+    "@babel/preset-env": "^7.0.0-beta.47",
+    "codecov": "^3.0.2",
+    "color-name-list": "^3.38.0",
     "color-names": "^2.0.0",
+    "color-tf": "^5.1.1",
     "colorutil": "^4.1.2",
-    "rollup": "^0.58.2",
+    "nyc": "^11.7.3",
+    "rollup": "^0.59.0",
     "rollup-plugin-babel": "^4.0.0-beta.4"
   },
   "dependencies": {}

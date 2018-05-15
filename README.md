@@ -1,34 +1,33 @@
-## Find efficiently the closest hex color
+## Find efficiently in k-dimensional data
 
 [![npm version][npm-image]][npm-url]
 [![build status][travis-image]][travis-url]
+[![coverage status][codecov-image]][codecov-url]
 
 ### API
 
-- `add(colors /*array of {hex, name}*/)`: add an array of colors (`add` calls `init` if it was not initialized yet)
-- `closest(hex)`: Search for the closest color
-- `init(depth: Int = 7)`: Init the tree at a given depth (default 7), accepted range: [0, 7]
-- `remove(hex)`: Remove a color object by its hex property
+- `new Octree/new Quadtree(array<{name, [key]}>, <{key?: string = 'coords', transform?: function = x => x, depth?: number = 4}>)`
+- `add(array<{name, [key]}>)`: Add an array of items
+- `closest(coords)`: Search for the closest color
+- `remove(coords)`: Remove a color object from the tree
 
 ```js
 import colorNames from 'color-names';
-import { add, closest } from 'color-octree';
+import { Octree } from 'ktree';
 
-// we expect an array of {hex, name}
-const colors = Object.entries(colorNames).map(([hex, name]) => ({ hex, name }));
+// simple hex-to-rgb (assuming hex are not in short formats, else see https://unpkg.com/color-tf/hexToRgb.js)
+const hexToRgb = s => [s.slice(-6, -4), s.slice(-4, -2), s.slice(-2)].map(x => parseInt(x, 16));
 
-add(colors);
-console.log(closest('5544df'));
+// we expect an array of {name, [key]} objects, where key is configurable
+const colors = Object.entries(colorNames).map(([hex, name]) => ({ name, hex }));
+
+const tree = new Octree(colors, { key: 'hex', transform: hexToRgb });
+console.log(tree.closest('5544df'));
 ```
 
-[live example](https://repl.it/@caub/closest-color)
-
-
-### Notice
-
-It uses `String.prototype.padStart`, it exists on node 8.11 and recent browsers, but you might still want to polyfill it (see polyfill.io or es-shims)
-
-[npm-image]: https://img.shields.io/npm/v/color-octree.svg?style=flat-square
-[npm-url]: https://www.npmjs.com/package/color-octree
-[travis-image]: https://img.shields.io/travis/caub/color-octree.svg?style=flat-square
-[travis-url]: https://travis-ci.org/caub/color-octree
+[npm-image]: https://img.shields.io/npm/v/ktree.svg?style=flat-square
+[npm-url]: https://www.npmjs.com/package/ktree
+[travis-image]: https://img.shields.io/travis/caub/ktree.svg?style=flat-square
+[travis-url]: https://travis-ci.org/caub/ktree
+[codecov-image]: https://img.shields.io/codecov/c/github/caub/ktree.svg?style=flat-square
+[codecov-url]: https://codecov.io/gh/caub/ktree

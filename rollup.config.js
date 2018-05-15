@@ -5,16 +5,16 @@ export default {
   output: [
     {
       format: 'es',
-      file: 'dist/es.js',
+      file: 'dist/ktree.es.js',
     },
     {
       format: 'umd',
-      file: 'dist/umd.js',
-      name: 'colorutil',
+      file: 'dist/ktree.umd.js',
+      name: 'ktree',
     },
     {
       format: 'cjs',
-      file: 'dist/cjs.js',
+      file: 'dist/ktree.cjs.js',
     },
   ],
   plugins: [
