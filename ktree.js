@@ -174,7 +174,7 @@ export const ktree = k => {
     }
     closest(value) {
       const coords = this.transform(value);
-      const node = this.getNodeFromCoords(this.coordsToBin(coords)); // todo improve
+      const node = this.getNodeFromCoordsV2(coords); // todo improve
       for (let i = node.n; i > 0; i--) {
         const res = this.len - i;
         const cs = getNeighbors(coords.map(c => c >> res), 1 << i);
@@ -205,13 +205,6 @@ export const ktree = k => {
       }
       return node;
     }
-    getNodeFromCoords(coords) {
-      let node = this.root;
-      for (let i = 0; i < coords[0].length && node[KEYS[0]]; i++) {
-        node = node[getCoord(coords, i)];
-      }
-      return node;
-    }
     closestIn(coords, items) {
       let minD = Infinity,
         current;
@@ -232,7 +225,7 @@ export const ktree = k => {
 
 
 export const prettify = ({ n, items = [], ...o } = {}, key) => n === 0 || items.length ? ({
-  items: items.map(x => x.name).join(', '), // items.map(x => `${x.name}: ${x[key]}`),
+  items: items.map(x => x[key]).join(', '),
   ['_' + n]: Object.keys(o).reduce((a, k) => ({ ...a, [k]: prettify(o[k], key) }), {}) // group children keys together else 0 come before n/items
 }) : undefined;
 
