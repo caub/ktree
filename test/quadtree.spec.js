@@ -22,11 +22,12 @@ const t = new Quadtree(
 );
 
 let item = t.closest('1236');
-
+console.log(item);
 while (item) {
   t.remove(item.name);
 
   const nextItem = t.closest('1236');
+  console.log(nextItem)
   assert(!nextItem || item.d <= nextItem.d)
   item = nextItem;
 }
