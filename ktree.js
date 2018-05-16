@@ -44,16 +44,6 @@ const buildTree3 = (depth, n = 0) =>
     };
 
 
-// min distance between point coords and the bounding top-left, bottom-right points, with resolution res
-const minDist = (coords, tl, br, res, max) => Math.min(
-  ...coords.map(
-    (c, j) => Math.min(
-      c - (tl[j] << res),
-      ((br[j] + 1) << res) - c
-    )
-  )
-);
-
 // get i-th  coordinates, concatenated to form a node key
 export const getCoord = (coords, i) => coords.map(c => c & (1 << i) ? '1' : '0').reduce((a, b) => a + b);
 
@@ -172,8 +162,22 @@ export const ktree = k => {
           const item = this.closestIn(coords, items);
           // here we must check if the minimal distance from the target to the neighbors square is more than d
           // if yes return this value
-          const minDFromNeighbors = minDist(coords, cs[0], cs[cs.length - 1], res);
-          // console.log(item, minDFromNeighbors, i);
+
+          // first, filter the sides to check, (ignore the external sides since there's nothing else to find in that direction)
+
+          // min distance between point coords and the bounding top-left, bottom-right points, with resolution res
+
+          const sizeI = (1 << res) - 1; // size of nodes at resolution i, - 1 to compare with top-left corner
+          const distToSides = cs[cs.length - 1].flatMap(
+            (c, j) => cs[0][j] && c < sizeI
+              ? [coords[j] - (cs[0][j] << res), ((c + 1) << res) - coords[j]]
+              : c < sizeI
+                ? [((c + 1) << res) - coords[j]]
+                : cs[0][j]
+                  ? [cs[0][j]]
+                  : []
+          );
+          const minDFromNeighbors = Math.min(...distToSides);
 
           if (item.d <= minDFromNeighbors) return item;
         }

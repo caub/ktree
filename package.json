@@ -1,6 +1,6 @@
 {
   "name": "ktree",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "Get closest color",
   "main": "dist/ktree.cjs.js",
   "browser": "dist/ktree.umd.js",
