@@ -1,12 +1,12 @@
 {
   "name": "ktree",
-  "version": "3.0.2",
-  "description": "Get closest color",
+  "version": "3.0.3",
+  "description": "Efficient tree search in k-dimensions",
   "main": "dist/ktree.cjs.js",
   "browser": "dist/ktree.umd.js",
   "module": "dist/ktree.es.js",
   "scripts": {
-    "test": "nyc babel-node test/index.spec",
+    "test": "nyc babel-node test",
     "coverage": "nyc report --reporter=lcov > coverage.lcov && codecov",
     "build": "NODE_ENV=rollup npx rollup -c",
     "prepare": "npm run build"
@@ -16,10 +16,11 @@
     "url": "git+https://github.com/caub/ktree.git"
   },
   "keywords": [
-    "color",
     "closest",
     "search",
-    "octree"
+    "quadtree",
+    "octree",
+    "tree"
   ],
   "author": "caub",
   "license": "ISC",
@@ -27,17 +28,22 @@
     "url": "https://github.com/caub/ktree/issues"
   },
   "homepage": "https://github.com/caub/ktree#readme",
+  "nyc": {
+    "extensions": [
+      ".mjs"
+    ]
+  },
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.47",
     "@babel/node": "^7.0.0-beta.47",
     "@babel/preset-env": "^7.0.0-beta.47",
     "codecov": "^3.0.2",
-    "color-name-list": "^3.38.0",
+    "color-name-list": "^3.39.0",
     "color-names": "^2.0.0",
     "color-tf": "^5.1.1",
     "colorutil": "^4.1.2",
-    "nyc": "^11.7.3",
-    "rollup": "^0.59.0",
+    "nyc": "^11.8.0",
+    "rollup": "^0.59.1",
     "rollup-plugin-babel": "^4.0.0-beta.4"
   },
   "dependencies": {}
