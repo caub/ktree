@@ -38,12 +38,11 @@
     "@babel/node": "^7.0.0-beta.47",
     "@babel/preset-env": "^7.0.0-beta.47",
     "codecov": "^3.0.2",
-    "color-name-list": "^3.39.0",
+    "color-name-list": "^3.45.0",
     "color-names": "^2.0.0",
-    "color-tf": "^5.1.1",
-    "colorutil": "^4.1.2",
+    "color-tf": "^5.1.2",
     "nyc": "^11.8.0",
-    "rollup": "^0.59.1",
+    "rollup": "^0.59.2",
     "rollup-plugin-babel": "^4.0.0-beta.4"
   },
   "dependencies": {}
