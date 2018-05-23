@@ -92,7 +92,7 @@ export const ktree = k => {
         : {
           n,
           items: [],
-          ...keys.reduce((o, key) => ({ ...o, [key]: buildTree(depth, n + 1) }), {})
+          ...KEYS.reduce((o, key) => ({ ...o, [key]: buildTree(depth, n + 1) }), {})
         };
     getNeighbors = (decs, N) => {
       const nodes = [];

@@ -1,6 +1,6 @@
 {
   "name": "ktree",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "Efficient tree search in k-dimensions",
   "main": "dist/ktree.cjs.js",
   "browser": "dist/ktree.umd.js",
@@ -41,6 +41,7 @@
     "color-name-list": "^3.45.0",
     "color-names": "^2.0.0",
     "color-tf": "^5.1.2",
+    "eslint": "^4.19.1",
     "nyc": "^11.8.0",
     "rollup": "^0.59.2",
     "rollup-plugin-babel": "^4.0.0-beta.4"
