@@ -1,12 +1,12 @@
 {
   "name": "ktree",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "description": "Efficient tree search in k-dimensions",
   "main": "dist/ktree.cjs.js",
   "browser": "dist/ktree.umd.js",
   "module": "dist/ktree.es.js",
   "scripts": {
-    "test": "nyc babel-node test",
+    "test": "nyc node test/index.spec",
     "coverage": "nyc report --reporter=lcov > coverage.lcov && codecov",
     "build": "NODE_ENV=rollup npx rollup -c",
     "prepare": "npm run build"
@@ -29,21 +29,29 @@
   },
   "homepage": "https://github.com/caub/ktree#readme",
   "nyc": {
-    "extensions": [
+    "extension": [
       ".mjs"
-    ]
+    ],
+    "require": [
+      "@std/esm"
+    ],
+    "check-coverage": true,
+    "lines": 80,
+    "statements": 80,
+    "functions": 65,
+    "branches": 65
   },
   "devDependencies": {
-    "@babel/core": "^7.0.0-beta.47",
-    "@babel/node": "^7.0.0-beta.47",
-    "@babel/preset-env": "^7.0.0-beta.47",
+    "@babel/core": "^7.0.0-beta.49",
+    "@babel/preset-env": "^7.0.0-beta.49",
+    "@std/esm": "^0.26.0",
     "codecov": "^3.0.2",
-    "color-name-list": "^3.45.0",
+    "color-name-list": "^3.46.0",
     "color-names": "^2.0.0",
     "color-tf": "^5.1.2",
     "eslint": "^4.19.1",
-    "nyc": "^11.8.0",
-    "rollup": "^0.59.2",
+    "nyc": "^12.0.1",
+    "rollup": "^0.59.4",
     "rollup-plugin-babel": "^4.0.0-beta.4"
   },
   "dependencies": {}

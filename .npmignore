@@ -2,3 +2,4 @@ rollup.config.js
 .babelrc
 .nyc_output
 .travis.yml
+.eslintrc

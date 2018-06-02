@@ -1,2 +1,0 @@
-import './quadtree';
-import './octree';
