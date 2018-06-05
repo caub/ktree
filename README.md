@@ -6,10 +6,10 @@
 
 ### API
 
-- `new Octree/new Quadtree(array<{name, [key]}>, <{key?: string = 'coords', transform?: function = x => x, depth?: number = 4}>)`
-- `add(array<{name, [key]}>)`: Add an array of items
-- `closest(coords)`: Search for the closest color
-- `remove(coords)`: Remove a color object from the tree
+- `new Octree/new Quadtree(array<{[key]}>, <{key?: string = 'coords', transform?: function = x => x, depth?: number = 4}>)`
+- `add(array<{[key]}>)`: Add an array of items
+- `closest(value)`: Search for the closest color by `key` value
+- `remove(value)`: Remove a color object from the tree by `key` value
 
 ```js
 import colorNames from 'color-names';
@@ -22,7 +22,9 @@ const hexToRgb = s => [s.slice(-6, -4), s.slice(-4, -2), s.slice(-2)].map(x => p
 const colors = Object.entries(colorNames).map(([hex, name]) => ({ name, hex }));
 
 const tree = new Octree(colors, { key: 'hex', transform: hexToRgb });
-console.log(tree.closest('5544df'));
+console.log(tree.closest('5544df')); // { name: 'Majorelle Blue', hex: '#6050dc', d: 16.55 }
+tree.remove('#6050dc');
+console.log(tree.closest('5544df')); // { name: 'Iris', hex: '#5a4fcf', d: 20.05 }
 ```
 
 [npm-image]: https://img.shields.io/npm/v/ktree.svg?style=flat-square
