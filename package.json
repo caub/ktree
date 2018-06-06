@@ -34,12 +34,7 @@
     ],
     "require": [
       "@std/esm"
-    ],
-    "check-coverage": true,
-    "lines": 80,
-    "statements": 80,
-    "functions": 65,
-    "branches": 65
+    ]
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.49",
