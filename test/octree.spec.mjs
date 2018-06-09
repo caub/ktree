@@ -12,6 +12,40 @@ const t1 = new Octree(
 );
 console.timeEnd('add');
 
+assert.equal(JSON.stringify(t1, null, '\t'), `{
+	"items": "",
+	"cs": {
+		"000": {
+			"items": "85,85,119, 102,85,102",
+			"cs": {
+				"111": {
+					"items": "85,85,119, 102,85,102",
+					"cs": {
+						"101": {
+							"items": "102,85,102",
+							"cs": {
+								"010": {
+									"items": "102,85,102",
+									"cs": {}
+								}
+							}
+						},
+						"001": {
+							"items": "85,85,119",
+							"cs": {
+								"111": {
+									"items": "85,85,119",
+									"cs": {}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}`)
+
 console.time('closest');
 const col1 = t1.closest(hexToRgb('556'));
 console.timeEnd('closest');
@@ -25,6 +59,30 @@ const t2 = new Octree(
   { key: 'hex', transform: hexToRgb, depth: 1 }
 );
 console.timeEnd('add');
+
+assert.equal(JSON.stringify(t2, null, '\t'), `{
+	"items": "",
+	"cs": {
+		"000": {
+			"items": "557, 656",
+			"cs": {
+				"111": {
+					"items": "557, 656",
+					"cs": {
+						"101": {
+							"items": "656",
+							"cs": {}
+						},
+						"001": {
+							"items": "557",
+							"cs": {}
+						}
+					}
+				}
+			}
+		}
+	}
+}`)
 
 console.time('closest');
 const col2 = t2.closest('556');

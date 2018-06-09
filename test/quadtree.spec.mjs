@@ -44,3 +44,5 @@ assert.deepEqual(results, [
   { name: '1001', d: 53.03772242470448 },
   { name: '1595', d: 95.04735661763561 }
 ]);
+
+assert.equal(JSON.stringify(t), `{"items":"","cs":{}}`);

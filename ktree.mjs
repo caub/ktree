@@ -209,8 +209,8 @@ export const ktree = k => {
       });
       return { ...current, d: minD ** .5 }; // todo bench vs returning squared distance
     }
-    toJSON(indent = '') {
-      return JSON.stringify(prettify(this.root, this.key), null, indent);
+    toJSON() {
+      return prettify(this.root, this.key);
     }
   };
 };
@@ -218,6 +218,6 @@ export const ktree = k => {
 
 export const prettify = ({ n, items = [], ...o } = {}, key) => n === 0 || items.length ? ({
   items: items.map(x => x[key]).join(', '),
-  ['_' + n]: Object.keys(o).reduce((a, k) => ({ ...a, [k]: prettify(o[k], key) }), {}) // group children keys together else 0 come before n/items
+  cs: Object.keys(o).reduce((a, k) => ({ ...a, [k]: prettify(o[k], key) }), {}) // group children keys together else 0 come before n/items
 }) : undefined;
 

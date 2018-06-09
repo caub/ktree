@@ -3,3 +3,4 @@ rollup.config.js
 .nyc_output
 .travis.yml
 .eslintrc
+test

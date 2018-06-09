@@ -1,6 +1,6 @@
 {
   "name": "ktree",
-  "version": "3.0.5",
+  "version": "3.1.0",
   "description": "Efficient tree search in k-dimensions",
   "main": "dist/ktree.cjs.js",
   "browser": "dist/ktree.umd.js",
@@ -8,7 +8,7 @@
   "scripts": {
     "test": "nyc node test/index.spec",
     "coverage": "nyc report --reporter=lcov > coverage.lcov && codecov",
-    "build": "NODE_ENV=rollup npx rollup -c",
+    "build": "NODE_ENV=rollup rollup -c",
     "prepare": "npm run build"
   },
   "repository": {
