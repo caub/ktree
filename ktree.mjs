@@ -8,13 +8,25 @@ if (!Array.prototype.flatMap) {
 // carterian products
 export const cart = (...args) => args.reduce((xs, a) => xs.flatMap(xsi => a.map(ai => [...xsi, ai])), [[]]);
 
+const dist1 = (c1, c2) => (c1[0] - c2[0]) ** 2;
 const dist2 = (c1, c2) => (c1[0] - c2[0]) ** 2 + (c1[1] - c2[1]) ** 2;
 const dist3 = (c1, c2) => (c1[0] - c2[0]) ** 2 + (c1[1] - c2[1]) ** 2 + (c1[2] - c2[2]) ** 2;
 const distk = (c1, c2) => c1.map((_, i) => (c1[i] - c2[i]) ** 2).reduce((a, b) => a + b);
 
+const eq1 = (c1, c2) => c1[0] === c2[0];
 const eq2 = (c1, c2) => c1[0] === c2[0] && c1[1] === c2[1];
 const eq3 = (c1, c2) => c1[0] === c2[0] && c1[1] === c2[1] && c1[2] === c2[2];
 const eqk = (c1, c2) => c1.every((_, i) => c1[i] && c2[i]);
+
+const buildTree1 = (depth, n = 0) =>
+  n >= depth
+    ? { n, items: [] }
+    : {
+      n,
+      items: [],
+      '0': buildTree1(depth, n + 1),
+      '1': buildTree1(depth, n + 1),
+    };
 
 const buildTree2 = (depth, n = 0) =>
   n >= depth
@@ -56,7 +68,20 @@ export const ktree = k => {
 
   let buildTree;
   let getNeighbors;
-  if (k === 2) {
+  if (k === 1) {
+    buildTree = buildTree1;
+    getNeighbors = ([x], N) => {
+      const nodes = [];
+      for (let i = 0; i < NS.length; i++) {
+        const X = x + NS[i][0];
+        if (X >= 0 && X < N) {
+          nodes.push([X]);
+        }
+      }
+      return nodes;
+    };
+  }
+  else if (k === 2) {
     buildTree = buildTree2
     getNeighbors = ([x, y], N) => {
       const nodes = [];
@@ -106,8 +131,8 @@ export const ktree = k => {
     };
   }
 
-  const eq = k === 2 ? eq2 : k === 3 ? eq3 : eqk;
-  const dist = k === 2 ? dist2 : k === 3 ? dist3 : distk;
+  const eq = k === 2 ? eq2 : k === 3 ? eq3 : k === 1 ? eq1 : eqk;
+  const dist = k === 2 ? dist2 : k === 3 ? dist3 : k === 1 ? dist1 : distk;
 
   return class KTree {
     constructor(items = [], { length = 8, depth = 4, key = 'coords', transform = x => x } = {}) {
