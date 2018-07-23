@@ -28,7 +28,7 @@ for (; ;) {
 
   t.remove(item.name);
 }
-assert.deepEqual(results, [
+assert.deepEqual(results.map(({ name, d2 }) => ({ name, d2 })), [
   { name: '12345678', d2: 17 },
   { name: '13395578', d2: 20 },
   { name: '11324798', d2: 1411 },

@@ -166,7 +166,8 @@ export const ktree = k => {
         const k = getCoord(coords, i);
         if (!node[k]) break;
         node = node[k];
-        node.items.push(item);
+        // store coords, for efficiency, and not overwrite possible existing one
+        node.items.push({ coords, ...item, });
       }
       if (node.items.length > 1 && node.n < this.len - 1) { // expand further, to get a fastest .closest
         KEYS.forEach(k => {
@@ -226,7 +227,7 @@ export const ktree = k => {
       let minD2 = Infinity,
         current;
       items.forEach(item => {
-        const d2 = dist(coords, this.transform(item[this.key]));
+        const d2 = dist(coords, item.coords);
         if (d2 < minD2) {
           minD2 = d2;
           current = item;

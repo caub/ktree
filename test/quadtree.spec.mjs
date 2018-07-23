@@ -33,7 +33,7 @@ for (; ;) {
 
   t.remove(item.name);
 }
-assert.deepEqual(results, [
+assert.deepEqual(results.map(({ name, d2 }) => ({ name, d2 })), [
   { name: '1234', d2: 4 },
   { name: '1339', d2: 10 },
   { name: '1132', d2: 17 },
@@ -58,18 +58,23 @@ const t2 = new Quadtree(
   { key: 'name', transform: tf, depth: 7 }
 );
 
-const Nearest = data => target => {
-  let d2 = Infinity, v;
-  data.forEach(val => {
-    const vl = tf(val), targ = tf(target);
-    const _d2 = (vl[0] - targ[0]) ** 2 + (vl[1] - targ[1]) ** 2;
-    if (_d2 < d2) {
-      d2 = _d2;
-      v = val;
-    }
-  });
-  return { name: v, d2 };
+const Nearest = _data => {
+  const data = _data.map(x => ({ name: x, coords: tf(x) }));
+  return target => {
+    let d2 = Infinity, v;
+    const targ = tf(target);
+    data.forEach(o => {
+      const vl = o.coords;
+      const _d2 = (vl[0] - targ[0]) ** 2 + (vl[1] - targ[1]) ** 2;
+      if (_d2 < d2) {
+        d2 = _d2;
+        v = o;
+      }
+    });
+    return { ...v, d2 };
+  };
 }
+
 
 const nearest2 = Nearest(data2);
 

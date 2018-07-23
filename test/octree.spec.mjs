@@ -88,7 +88,7 @@ console.time('closest');
 const col2 = t2.closest('556');
 console.timeEnd('closest');
 
-assert.deepEqual(col2, { name: 'Test', hex: '557', d2: 289 });
+assert.deepEqual(col2, { name: 'Test', coords: [85, 85, 119], hex: '557', d2: 289 });
 
 
 // ###################
@@ -104,7 +104,7 @@ console.time('closest');
 const col3 = t3.closest('556');
 console.timeEnd('closest');
 
-assert.deepEqual(col3, { hex: '#585562', name: 'Scarpa Flow', d2: 25 });
+assert.deepEqual(col3, { hex: '#585562', coords: [88, 85, 98], name: 'Scarpa Flow', d2: 25 });
 
 // ####################
 console.log('\n## color-name-list (17k colors)');
@@ -117,7 +117,7 @@ console.time('closest');
 const col4 = t4.closest('556');
 console.timeEnd('closest');
 
-assert.deepEqual(col4, { name: 'Freefall', hex: '#565266', d2: 10 });
+assert.deepEqual(col4, { name: 'Freefall', coords: [86, 82, 102], hex: '#565266', d2: 10 });
 
 console.time('remove');
 t4.remove('#565266');
@@ -127,7 +127,7 @@ console.time('closest');
 const col31 = t4.closest('556');
 console.timeEnd('closest');
 
-assert.deepEqual(col31, { name: 'Inky Storm', hex: '#535266', d2: 13 });
+assert.deepEqual(col31, { name: 'Inky Storm', coords: [83, 82, 102], hex: '#535266', d2: 13 });
 
 console.time('remove');
 t4.remove('#535266');
@@ -139,6 +139,7 @@ console.timeEnd('closest');
 
 assert.deepEqual(col32, {
 	name: `Black Dragon's Caldron`,
+	coords: [84, 85, 98],
 	hex: '#545562',
 	d2: 17
 });
