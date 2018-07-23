@@ -59,6 +59,18 @@ const buildTree3 = (depth, n = 0) =>
 // get i-th  coordinates, concatenated to form a node key
 export const getCoord = (coords, i) => coords.map(c => c & (1 << i) ? '1' : '0').reduce((a, b) => a + b);
 
+
+// distance between point coords and a sub-grid of resolution res
+const minDist = (pointCoords, gridCoords, res) => Math.min(
+  ...pointCoords.map(
+    (c, j) => Math.min(
+      c - (gridCoords[j] << res),
+      ((gridCoords[j] + 1) << res) - 1 - c
+    )
+  )
+);
+
+
 // generate a KTree class for a given k, for k=2, k=3 we try to put inline functions (defined above) for perf
 // todo bench if it's really faster
 export const ktree = k => {
@@ -178,33 +190,24 @@ export const ktree = k => {
     closest(value) {
       const coords = this.transform(value);
       const node = this.getNodeFromCoords(coords); // todo improve
+
+      if (node.items.length) // if the grid of dimension 2 already has items, that's good candidates
+        return this.closestIn(coords, node.items);
+
       for (let i = node.n; i > 0; i--) {
         const res = this.len - i;
-        const cs = getNeighbors(coords.map(c => c >> res), 1 << i);
+        const grid = coords.map(c => c >> res); // the grid of dimenions res containing the target coords
+        const cs = getNeighbors(grid, 1 << i);
         const items = cs
           .flatMap(c => this.getNodeFromCoords(c, res).items);
+
         if (items.length) {
           const item = this.closestIn(coords, items);
-          // here we must check if the minimal distance from the target to the neighbors square is more than d
-          // if yes return this value
-
-          // first, filter the sides to check, (ignore the external sides since there's nothing else to find in that direction)
-
-          // min distance between point coords and the bounding top-left, bottom-right points, with resolution res
-
-          const sizeI = (1 << res) - 1; // size of nodes at resolution i, - 1 to compare with top-left corner
-          const distToSides = cs[cs.length - 1].flatMap(
-            (c, j) => cs[0][j] && c < sizeI
-              ? [coords[j] - (cs[0][j] << res), ((c + 1) << res) - coords[j]]
-              : c < sizeI
-                ? [((c + 1) << res) - coords[j]]
-                : cs[0][j]
-                  ? [cs[0][j]]
-                  : []
-          );
-          const minDFromNeighbors = Math.min(...distToSides);
-
-          if (item.d <= minDFromNeighbors) return item;
+          // keep only items in the neightbors, that are at a distance < dGrid + (1 << res) + 1 of the target coords
+          // this value corresponds to the closest point not in the current neighbors
+          const dGrid = minDist(coords, grid, res); // TODO improve by filtering the sides which are not at the limit
+          if (item.d2 < dGrid + (1 << res) + 1)
+            return item;
         }
       }
       // search in all
@@ -223,16 +226,16 @@ export const ktree = k => {
       return node;
     }
     closestIn(coords, items) {
-      let minD = Infinity,
+      let minD2 = Infinity,
         current;
       items.forEach(item => {
-        const d = dist(coords, this.transform(item[this.key]));
-        if (d < minD) {
-          minD = d;
+        const d2 = dist(coords, this.transform(item[this.key]));
+        if (d2 < minD2) {
+          minD2 = d2;
           current = item;
         }
       });
-      return { ...current, d: minD ** .5 }; // todo bench vs returning squared distance
+      return { ...current, d2: minD2 };
     }
     toJSON() {
       return prettify(this.root, this.key);

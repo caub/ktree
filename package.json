@@ -1,6 +1,6 @@
 {
   "name": "ktree",
-  "version": "3.1.1",
+  "version": "4.0.0",
   "description": "Efficient tree search in k-dimensions",
   "main": "dist/ktree.cjs.js",
   "browser": "dist/ktree.umd.js",
@@ -37,17 +37,18 @@
     ]
   },
   "devDependencies": {
-    "@babel/core": "^7.0.0-beta.49",
-    "@babel/preset-env": "^7.0.0-beta.49",
+    "@babel/core": "^7.0.0-beta.54",
+    "@babel/preset-env": "^7.0.0-beta.54",
     "@std/esm": "^0.26.0",
-    "codecov": "^3.0.2",
+    "codecov": "^3.0.4",
     "color-name-list": "^3.46.0",
     "color-names": "^2.0.0",
     "color-tf": "^5.1.2",
-    "eslint": "^4.19.1",
-    "nyc": "^12.0.1",
-    "rollup": "^0.59.4",
-    "rollup-plugin-babel": "^4.0.0-beta.4"
+    "eslint": "^5.2.0",
+    "nearest-color": "^0.4.2",
+    "nyc": "^12.0.2",
+    "rollup": "^0.63.4",
+    "rollup-plugin-babel": "^4.0.0-beta.7"
   },
   "dependencies": {}
 }

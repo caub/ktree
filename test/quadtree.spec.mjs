@@ -33,16 +33,41 @@ for (; ;) {
   t.remove(item.name);
 }
 assert.deepEqual(results, [
-  { name: '1234', d: 2 },
-  { name: '1339', d: 3.1622776601683795 },
-  { name: '1132', d: 4.123105625617661 },
-  { name: '1330', d: 6.082762530298219 },
-  { name: '1141', d: 11.045361017187261 },
-  { name: '1129', d: 13.038404810405298 },
-  { name: '1327', d: 15.033296378372908 },
-  { name: '2124', d: 23.430749027719962 },
-  { name: '1001', d: 53.03772242470448 },
-  { name: '1595', d: 95.04735661763561 }
+  { name: '1234', d2: 4 },
+  { name: '1339', d2: 10 },
+  { name: '1132', d2: 17 },
+  { name: '1330', d2: 37 },
+  { name: '1141', d2: 122 },
+  { name: '1129', d2: 170 },
+  { name: '1327', d2: 226 },
+  { name: '2124', d2: 549 },
+  { name: '1001', d2: 2813 },
+  { name: '1595', d2: 9034 }
 ]);
 
 assert.equal(JSON.stringify(t), `{"items":"","cs":{}}`);
+
+// add test-case that failed in v3
+
+const data2 = ["4f59", "5452"];
+const TARGET = '585b';
+
+const t2 = new Quadtree(
+  data2.map(x => ({ name: x })),
+  { key: 'name', transform: tf, depth: 7 }
+);
+
+const nearest = target => {
+  let d2 = Infinity, v;
+  data2.forEach(val => {
+    const vl = tf(val), targ = tf(target);
+    const _d2 = (vl[0] - targ[0]) ** 2 + (vl[1] - targ[1]) ** 2;
+    if (_d2 < d2) {
+      d2 = _d2;
+      v = val;
+    }
+  });
+  return { name: v, d2 };
+}
+
+assert.deepEqual(t2.closest(TARGET), nearest(TARGET));
