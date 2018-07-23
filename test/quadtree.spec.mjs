@@ -1,5 +1,6 @@
 import assert from 'assert';
 import { Quadtree } from '../index';
+import crypto from 'crypto';
 
 const tf = x => [x.slice(0, 2), x.slice(2, 4)].map(x => parseInt(x, 16));
 
@@ -57,9 +58,9 @@ const t2 = new Quadtree(
   { key: 'name', transform: tf, depth: 7 }
 );
 
-const nearest = target => {
+const Nearest = data => target => {
   let d2 = Infinity, v;
-  data2.forEach(val => {
+  data.forEach(val => {
     const vl = tf(val), targ = tf(target);
     const _d2 = (vl[0] - targ[0]) ** 2 + (vl[1] - targ[1]) ** 2;
     if (_d2 < d2) {
@@ -70,4 +71,41 @@ const nearest = target => {
   return { name: v, d2 };
 }
 
-assert.deepEqual(t2.closest(TARGET), nearest(TARGET));
+const nearest2 = Nearest(data2);
+
+assert.deepEqual(t2.closest(TARGET), nearest2(TARGET));
+
+// more brutal bench and test
+const data3 = Array.from({ length: 1500 }, () => crypto.randomBytes(2).toString('hex'));
+const targets = Array.from({ length: 500 }, () => crypto.randomBytes(2).toString('hex'));
+
+const nearest3 = Nearest(data3);
+const t3 = new Quadtree(
+  data3.map(x => ({ name: x })),
+  { key: 'name', transform: tf, depth: 7 }
+);
+
+const ks = targets.slice();
+const ns = targets.slice();
+
+console.time('nearest');
+targets.forEach((target, i) => {
+  ns[i] = nearest3(target);
+});
+console.timeEnd('nearest');
+
+console.time('ktree');
+targets.forEach((target, i) => {
+  ks[i] = t3.closest(target);
+});
+console.timeEnd('ktree');
+
+targets.forEach((target, i) => {
+  const a = ks[i];
+  const b = ns[i];
+  if (a.name !== b.name && a.d2 !== b.d2) {
+    console.log(target, a, b);
+    assert(false);
+    return
+  }
+})

@@ -191,9 +191,6 @@ export const ktree = k => {
       const coords = this.transform(value);
       const node = this.getNodeFromCoords(coords); // todo improve
 
-      if (node.items.length) // if the grid of dimension 2 already has items, that's good candidates
-        return this.closestIn(coords, node.items);
-
       for (let i = node.n; i > 0; i--) {
         const res = this.len - i;
         const grid = coords.map(c => c >> res); // the grid of dimenions res containing the target coords

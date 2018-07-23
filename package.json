@@ -1,6 +1,6 @@
 {
   "name": "ktree",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "Efficient tree search in k-dimensions",
   "main": "dist/ktree.cjs.js",
   "browser": "dist/ktree.umd.js",

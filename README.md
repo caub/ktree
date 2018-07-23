@@ -23,9 +23,9 @@ const colors = Object.entries(colorNames).map(([hex, name]) => ({ name, hex }));
 // Octree constructor needs an array of {[key], ...} objects, where key is configurable
 // We'll use 'hex' here, and add a 'transform' property to map those 'hex' values to 3D coordinates
 const tree = new Octree(colors, { key: 'hex', transform: hexToRgb });
-console.log(tree.closest('5544df')); // { name: 'Majorelle Blue', hex: '#6050dc', d: 16.55 }
+console.log(tree.closest('5544df')); // { name: 'Majorelle Blue', hex: '#6050dc', d2: 273 }
 tree.remove('#6050dc');
-console.log(tree.closest('5544df')); // { name: 'Iris', hex: '#5a4fcf', d: 20.05 }
+console.log(tree.closest('5544df')); // { name: 'Iris', hex: '#5a4fcf', d2: 402 }
 ```
 
 [npm-image]: https://img.shields.io/npm/v/ktree.svg?style=flat-square
